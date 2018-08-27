@@ -1,0 +1,42 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+      "browser": true,
+      "commonjs": true,
+      "es6": true,
+      "node": false
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+      "sourceType": "module",
+      "allowImportExportEverywhere": false
+  },
+  "globals": {
+      "Autodesk": true
+  },
+  "rules": {
+      "indent": [
+          "error",
+          2,
+          {
+              "SwitchCase": 1
+          }
+      ],
+      "linebreak-style": [
+          "error",
+          "unix"
+      ],
+      "quotes": [
+          "error",
+          "single"
+      ],
+      "semi": [
+          "error",
+          "always"
+      ],
+      "no-console": 0,
+      "no-undef": 1,
+      "no-unused-vars": 1,
+      "no-extra-boolean-cast": 0
+  }
+}

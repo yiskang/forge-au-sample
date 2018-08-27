@@ -4,7 +4,7 @@
       "browser": true,
       "commonjs": true,
       "es6": true,
-      "node": false
+      "node": true
   },
   "extends": "eslint:recommended",
   "parserOptions": {

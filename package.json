@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "express": "^4.16.3",
+    "json-server": "^0.14.0",
     "jstree": "^3.3.5"
   },
   "devDependencies": {
@@ -12,9 +12,10 @@
     "eslint": "^5.4.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "node --experimental-modules mock-server/index.mjs"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "yiskang <eason.kang@autodesk.com>",
+  "license": "MIT"
 }

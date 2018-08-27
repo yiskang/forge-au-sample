@@ -1,0 +1,109 @@
+{
+  "dataTypes": [
+    {
+      "id": 1,
+      "name": "Unknown",
+      "serial": 0
+    },
+    {
+      "id": 2,
+      "name": "Boolean",
+      "serial": 1
+    },
+    {
+      "id": 3,
+      "name": "Integer",
+      "serial": 2
+    },
+    {
+      "id": 4,
+      "name": "Double",
+      "serial": 3
+    },
+    {
+      "id": 5,
+      "name": "BLOB",
+      "serial": 10
+    },
+    {
+      "id": 6,
+      "name": "DbKey",
+      "serial": 11
+    },
+    {
+      "id": 7,
+      "name": "String",
+      "serial": 20
+    },
+    {
+      "id": 8,
+      "name": "LocalizableString",
+      "serial": 21
+    },
+    {
+      "id": 9,
+      "name": "DateTime",
+      "serial": 22
+    },
+    {
+      "id": 10,
+      "name": "GeoLocation",
+      "serial": 23
+    },
+    {
+      "id": 10,
+      "name": "Position",
+      "serial": 24
+    }
+  ],
+  "props": [
+    {
+      "id": 1,
+      "name": "GUID",
+      "category": "Identity Data",
+      "dataType_id": 7,
+      "dataTypeContext": "",
+      "description": "",
+      "displayName": "GUID",
+      "flags": 0,
+      "value": "c85e5be0-d8d5-4148-836f-b55e711ef373-00068ac9",
+      "dbId": 2591
+    },
+    {
+      "id": 2,
+      "name": "Type",
+      "category": "Identity Data",
+      "dataType_id": 7,
+      "dataTypeContext": "",
+      "description": "",
+      "displayName": "Type",
+      "flags": 0,
+      "value": "Walls",
+      "dbId": 2591
+    },
+    {
+      "id": 3,
+      "name": "GUID",
+      "category": "Identity Data",
+      "dataType_id": 7,
+      "dataTypeContext": "",
+      "description": "",
+      "displayName": "GUID",
+      "flags": 0,
+      "value": "a6aa132d-ccd7-408f-b2f9-ed67350c8c3a-0003b64a",
+      "dbId": 2214
+    },
+    {
+      "id": 4,
+      "name": "Type",
+      "category": "Identity Data",
+      "dataType_id": 7,
+      "dataTypeContext": "",
+      "description": "",
+      "displayName": "Type",
+      "flags": 0,
+      "value": "Roof",
+      "dbId": 2214
+    }
+  ]
+}

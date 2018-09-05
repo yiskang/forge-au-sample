@@ -25,6 +25,20 @@
     return document.location.protocol + '//' + document.location.host;
   }
 
+  //ref: https://github.com/Autodesk-Forge/library-javascript-viewer-extensions/blob/0c0db2d6426f4ff4aea1042813ed10da17c63554/src/components/UIComponent/UIComponent.js#L34
+  function guid( format = 'xxxxxxxxxx' ) {
+
+    let d = new Date().getTime();
+
+    return format.replace(
+      /[xy]/g,
+      function( c ) {
+        let r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
+      });
+  }
+
   class AdnToolInterface {
     constructor( viewer ) {
       this._viewer = viewer;
@@ -60,6 +74,10 @@
   
     activate( name ) {
       this._active = true;
+    }
+
+    deactivate( name ) {
+      this._active = false;
     }
   
     update( highResTimestamp ) {
@@ -124,13 +142,92 @@
       super( viewer );
 
       this._names = [ 'adn-markup-3d' ];
+      this.markups = [];
+      this.markupIcons = [];
+      this.handleCameraUpdate = this.handleCameraUpdate.bind( this );
+      this.editMode = false;
     }
 
     getPriority() {
       return 10;
     }
 
-    handleSingleClick( event, button ) {
+    isEditMode() {
+      return this.editMode;
+    }
+
+    enterEditMode() {
+      this.editMode = true;
+    }
+
+    leaveEditMode() {
+      this.editMode = false;
+    }
+
+    activate() {
+      this.viewer.addEventListener(
+        Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+        this.handleCameraUpdate
+      );
+    }
+    
+    deactivate() {
+      this.viewer.removeEventListener(
+        Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+        this.handleCameraUpdate
+      );
+    }
+
+    drawMarkup( pos3d, radius, id ) {
+      const viewer = this.viewer;
+      radius = radius || 12;
+      id = id || guid();
+
+      const markup = {
+        id,
+        pos3d,
+        radius
+      };
+
+      this.markups.push( markup );
+
+      const pos2d = viewer.worldToClient( pos3d );
+
+      const markupIcon = document.createElement( 'div' );
+      this.viewer.container.appendChild( markupIcon );
+      this.markupIcons.push( markupIcon );
+      //! Todo: create svg
+
+      markupIcon.style.left =  pos2d.x - markup.radius * 2;
+      markupIcon.style.top = pos2d.y - markup.radius;
+      markupIcon.style.backgroundColor = 'red';
+      markupIcon.style.zIndex = 1000;
+
+      markupIcon.style.pointerEvents = 'none',
+      markupIcon.style.width = '20px';
+      markupIcon.style.height = '20px';
+      markupIcon.style.position = 'absolute';
+      markupIcon.style.overflow = 'visible';
+    }
+
+    handleCameraUpdate() {
+      const viewer = this.viewer;
+      
+      const n = this.markups.length;
+      for( let i=0; i<n; ++i ) {
+        const markup = this.markups[i];
+        const markupIcon = this.markupIcons[i];
+
+        // Get position in screen viewport
+        const pos2d = viewer.worldToClient( markup.pos3d );
+
+        // Update SVG position
+        markupIcon.style.left =  pos2d.x - markup.radius * 2;
+        markupIcon.style.top = pos2d.y - markup.radius;
+      }
+    }
+
+    handleSingleClick( event ) {
       const viewer = this.viewer;
 
       const viewport = viewer.container.getBoundingClientRect();
@@ -139,8 +236,10 @@
 
       //get the selected 3D position of the object
       const result = viewer.impl.hitTest( canvasX, canvasY, true );
-      
-      console.log( result );
+      if( !result ) return true;
+
+      if( this.editMode )
+        this.drawMarkup( result.intersectPoint.clone() );
 
       return true;
     }
@@ -186,11 +285,11 @@
         if( state === avu.Button.State.INACTIVE ) {
           markupAddButton.setState( avu.Button.State.ACTIVE );
 
-          viewer.toolController.activateTool( tool.getName() );
+          tool.enterEditMode();
         } else if( state === avu.Button.State.ACTIVE ) {
           markupAddButton.setState( avu.Button.State.INACTIVE );
 
-          viewer.toolController.deactivateTool( tool.getName() );
+          tool.leaveEditMode();
         }
       };
 
@@ -205,10 +304,13 @@
     }
 
     load() {
-      this.creationTool = new AdnMarkup3dCreationTool( this.viewer );
-      this.viewer.toolController.registerTool( this.creationTool );
+      const viewer = this.viewer;
+      const tool = new AdnMarkup3dCreationTool( this.viewer );
+      viewer.toolController.registerTool( tool );
+      viewer.toolController.activateTool( tool.getName() );
+      this.creationTool = tool;
 
-      if( this.viewer.toolbar ) {
+      if( viewer.toolbar ) {
         // Toolbar is already available, create the UI
         this.createUI();
       } else {

@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+}
+
+#MyViewerDiv {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background-color: #F0F8FF;
+}

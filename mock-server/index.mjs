@@ -31,7 +31,7 @@ const foreignKeySuffix = '_id';
 const router = jsonServer.router( dbFile , { foreignKeySuffix } );
 
 const defaultsOpts = {
-  static: path.join(process.cwd(), './' ),
+  static: path.join( process.cwd(), './' ),
   bodyParser: true
 };
 const middlewares = jsonServer.defaults( defaultsOpts );

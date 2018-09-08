@@ -12,7 +12,9 @@
       "allowImportExportEverywhere": false
   },
   "globals": {
-      "Autodesk": true
+      "Autodesk": true,
+      "THREE": true,
+      "SVG": true
   },
   "rules": {
       "indent": [

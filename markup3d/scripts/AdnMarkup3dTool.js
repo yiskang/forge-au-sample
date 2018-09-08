@@ -21,10 +21,6 @@
 'use strict';
 
 (function() {
-  function getServerUrl() {
-    return document.location.protocol + '//' + document.location.host;
-  }
-
   //ref: https://github.com/Autodesk-Forge/library-javascript-viewer-extensions/blob/0c0db2d6426f4ff4aea1042813ed10da17c63554/src/components/UIComponent/UIComponent.js#L34
   function guid( format = 'xxxxxxxxxx' ) {
 
@@ -137,7 +133,7 @@
     }
   }
 
-  class AdnMarkup3dCreationTool extends AdnToolInterface {
+  class AdnMarkup3dTool extends AdnToolInterface {
     constructor( viewer ) {
       super( viewer );
 
@@ -178,15 +174,26 @@
       );
     }
 
-    drawMarkup( pos3d, radius, id ) {
+    toggleVisible() {
+      const n = this.markups.length;
+      for( let i=0; i<n; ++i ) {
+        const markupIcon = this.markupIcons[i];
+
+        // Update markup visibility
+        const show = !( markupIcon.style.display === 'block' );
+        markupIcon.style.display = ( show ) ? 'block' : 'none';
+      }
+    }
+
+    drawMarkup( pos3d, diameter, id ) {
       const viewer = this.viewer;
-      radius = radius || 12;
+      diameter = diameter || 16;
       id = id || guid();
 
       const markup = {
         id,
         pos3d,
-        radius
+        diameter
       };
 
       this.markups.push( markup );
@@ -196,18 +203,41 @@
       const markupIcon = document.createElement( 'div' );
       this.viewer.container.appendChild( markupIcon );
       this.markupIcons.push( markupIcon );
-      //! Todo: create svg
 
-      markupIcon.style.left =  pos2d.x - markup.radius * 2;
-      markupIcon.style.top = pos2d.y - markup.radius;
-      markupIcon.style.backgroundColor = 'red';
-      markupIcon.style.zIndex = 1000;
+      const svgSize = diameter + 2;
+      const circlePos = ( svgSize - diameter ) / 2;
+      const markupSvg = SVG( markupIcon ).size( svgSize, svgSize );
+      markupSvg.id = id;
+
+      const circle = markupSvg.circle( diameter );
+      circle.fill( '#FF8888' )
+        .stroke( '#FF0000' )
+        .attr( 'fill-opacity', 0.6 )
+        .attr( 'stroke-width', 1.5 )
+        .move( circlePos, circlePos );
+
+      markupIcon.style.left =  pos2d.x - diameter / 2;
+      markupIcon.style.top = pos2d.y - diameter / 2;
+      //markupIcon.style.zIndex = 1000; //!<<< for debugging
 
       markupIcon.style.pointerEvents = 'none',
-      markupIcon.style.width = '20px';
-      markupIcon.style.height = '20px';
+      markupIcon.style.width = `${ svgSize }px`;
+      markupIcon.style.height = `${ svgSize }px`;
       markupIcon.style.position = 'absolute';
       markupIcon.style.overflow = 'visible';
+      markupIcon.style.display = 'block';
+      //markupIcon.style.border = '1px solid black'; //!<<< for debugging
+    }
+
+    removeMarkup( id ) {
+      const idx = this.markups.findIndex( ( m ) => m.id === id );
+
+      if( id === -1 )
+        return console.warn( `No markup with id \`${ id }\`` );
+
+      this.markups.splice( idx, 1 );
+      const markupIcon = this.markupIcons[idx];
+      markupIcon.parentNode.removeChild( markupIcon );
     }
 
     handleCameraUpdate() {
@@ -218,12 +248,12 @@
         const markup = this.markups[i];
         const markupIcon = this.markupIcons[i];
 
-        // Get position in screen viewport
+        // Get position in browser screen viewport
         const pos2d = viewer.worldToClient( markup.pos3d );
 
-        // Update SVG position
-        markupIcon.style.left =  pos2d.x - markup.radius * 2;
-        markupIcon.style.top = pos2d.y - markup.radius;
+        // Update markup position
+        markupIcon.style.left =  pos2d.x - markup.diameter / 2;
+        markupIcon.style.top = pos2d.y - markup.diameter / 2;
       }
     }
 
@@ -242,6 +272,42 @@
         this.drawMarkup( result.intersectPoint.clone() );
 
       return true;
+    }
+
+    getState( viewerState ) {
+      const markups = [];
+  
+      for( let id in this.markups ) {
+        const markup = this.markups[id];
+
+        markups.push({
+          id: markup.id,
+          pos3d: markup.pos3d.toArray(),
+          diameter: markup.diameter
+        });
+      }
+
+      viewerState.adnMarkup3d = {
+        markups
+      };
+    }
+
+    restoreState( viewerState ) {
+      while( this.markups.length ) {
+        const markup = this.markups.shift();
+        this.removeMarkup( markup.id );
+      }
+
+      if( !viewerState.adnMarkup3d )
+        return;
+
+      const markups = viewerState.adnMarkup3d.markups;
+      const n = markups.length;
+      for( let i=0; i<n; ++i ) {
+        const markup = markups[i];
+        const pos3d = new THREE.Vector3().fromArray( markup.pos3d );
+        this.drawMarkup( pos3d, markup.diameter, markup.id );
+      }
     }
   }
 
@@ -264,7 +330,7 @@
 
     createUI() {
       const viewer = this.viewer;
-      const tool = this.creationTool;
+      const tool = this.tool;
       const avu = Autodesk.Viewing.UI;
 
       const markupVisibilityButton = new avu.Button( 'toolbar-adnMarkupVisibilityTool' );
@@ -272,7 +338,20 @@
       markupVisibilityButton.addClass( 'far' );
       markupVisibilityButton.setIcon( 'fa-eye' );
       markupVisibilityButton.onClick = function() {
+        const state = markupVisibilityButton.getState();
 
+        if( state === avu.Button.State.INACTIVE ) {
+          markupVisibilityButton.setState( avu.Button.State.ACTIVE );
+        } else if( state === avu.Button.State.ACTIVE ) {
+          markupVisibilityButton.setState( avu.Button.State.INACTIVE );
+
+          if( tool.isEditMode() ) {
+            markupAddButton.setState( avu.Button.State.INACTIVE );
+            tool.leaveEditMode();
+          }
+        }
+
+        tool.toggleVisible();
       };
 
       const markupAddButton = new avu.Button( 'toolbar-adnMarkupAddTool' );
@@ -284,6 +363,7 @@
 
         if( state === avu.Button.State.INACTIVE ) {
           markupAddButton.setState( avu.Button.State.ACTIVE );
+          markupVisibilityButton.setState( avu.Button.State.ACTIVE );
 
           tool.enterEditMode();
         } else if( state === avu.Button.State.ACTIVE ) {
@@ -305,10 +385,10 @@
 
     load() {
       const viewer = this.viewer;
-      const tool = new AdnMarkup3dCreationTool( this.viewer );
+      const tool = new AdnMarkup3dTool( this.viewer );
       viewer.toolController.registerTool( tool );
       viewer.toolController.activateTool( tool.getName() );
-      this.creationTool = tool;
+      this.tool = tool;
 
       if( viewer.toolbar ) {
         // Toolbar is already available, create the UI
@@ -325,9 +405,9 @@
     }
 
     unload() {
-      this.viewer.toolController.deactivateTool( this.creationTool.getName() );
-      this.viewer.toolController.deregisterTool( this.creationTool );
-      this.creationTool = null;
+      this.viewer.toolController.deactivateTool( this.tool.getName() );
+      this.viewer.toolController.deregisterTool( this.tool );
+      this.tool = null;
 
       if( this.subToolbar ) {
         this.viewer.toolbar.removeControl( this.subToolbar );
@@ -336,6 +416,14 @@
       }
 
       return true;
+    }
+
+    getState( viewerState ) {
+      this.tool.getState( viewerState );
+    }
+
+    restoreState( viewerState, immediate ) {
+      this.tool.restoreState( viewerState, immediate );
     }
   }
 

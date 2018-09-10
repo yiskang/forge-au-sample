@@ -21,6 +21,10 @@
 'use strict';
 
 (function() {
+  function getServerUrl() {
+    return document.location.protocol + '//' + document.location.host;
+  }
+
   //ref: https://github.com/Autodesk-Forge/library-javascript-viewer-extensions/blob/0c0db2d6426f4ff4aea1042813ed10da17c63554/src/components/UIComponent/UIComponent.js#L34
   function guid( format = 'xxxxxxxxxx' ) {
 
@@ -227,6 +231,8 @@
       markupIcon.style.overflow = 'visible';
       markupIcon.style.display = 'block';
       //markupIcon.style.border = '1px solid black'; //!<<< for debugging
+
+      return markup;
     }
 
     removeMarkup( id ) {
@@ -268,8 +274,36 @@
       const result = viewer.impl.hitTest( canvasX, canvasY, true );
       if( !result ) return true;
 
-      if( this.editMode )
-        this.drawMarkup( result.intersectPoint.clone() );
+      if( this.editMode ) {
+        const markup = this.drawMarkup( result.intersectPoint.clone() );
+        // Save new markup to server
+        const srvUrl = getServerUrl();
+
+        fetch( `${ srvUrl }/api/markups`, {
+          method: 'post',
+          body: JSON.stringify({
+            serial: markup.id,
+            pos3d: markup.pos3d.toArray(),
+            diameter: markup.diameter
+          }),
+          headers: new Headers({
+            'Content-Type': 'application/json'
+          })
+        })
+          .then( ( response ) => {
+            if( response.status === 200 || response.status === 201 ) {
+              return response.json();
+            } else {
+              return console.error( new Error( response.statusText ) );
+            }
+          })
+          .then( ( data ) => {
+            if( !data ) return console.error( new Error( 'Failed to push the new markup to the server' ) );
+
+            console.log( data );
+          })
+          .catch( ( error ) => console.error( new Error( error ) ) );
+      }
 
       return true;
     }
@@ -317,6 +351,7 @@
 
       this.createUI = this.createUI.bind( this );
       this.onToolbarCreated = this.onToolbarCreated.bind( this );
+      this.onModelLoaded = this.onModelLoaded.bind( this );
     }
 
     onToolbarCreated() {
@@ -328,12 +363,53 @@
       this.createUI();
     }
 
+    onModelLoaded() {
+      this.viewer.removeEventListener(
+        Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+        this.onModelLoaded
+      );
+
+      const srvUrl = getServerUrl();
+
+      fetch( `${ srvUrl }/api/markups`, {
+        method: 'get',
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        })
+      })
+        .then( ( response ) => {
+          if( response.status === 200 ) {
+            return response.json();
+          } else {
+            return console.error( new Error( response.statusText ) );
+          }
+        })
+        .then( ( data ) => {
+          if( !data ) return console.error( new Error( 'Failed to fetch markups from the server' ) );
+
+          console.log( 'Load markups', data );
+
+          for( let i=0; i<data.length; ++i ) {
+            const markup = data[i];
+            const pos3d = new THREE.Vector3().fromArray( markup.pos3d );
+            this.tool.drawMarkup( pos3d, markup.diameter, markup.serial );
+          }
+        })
+        .catch( ( error ) => console.error( new Error( error ) ) );
+    }
+
     createUI() {
       const viewer = this.viewer;
       const tool = this.tool;
       const avu = Autodesk.Viewing.UI;
 
+      viewer.addEventListener(
+        Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+        this.onModelLoaded
+      );
+
       const markupVisibilityButton = new avu.Button( 'toolbar-adnMarkupVisibilityTool' );
+      markupVisibilityButton.setState( avu.Button.State.ACTIVE );
       markupVisibilityButton.setToolTip( 'Show Markups' );
       markupVisibilityButton.addClass( 'far' );
       markupVisibilityButton.setIcon( 'fa-eye' );

@@ -389,11 +389,18 @@
 
           console.log( 'Load markups', data );
 
-          for( let i=0; i<data.length; ++i ) {
-            const markup = data[i];
-            const pos3d = new THREE.Vector3().fromArray( markup.pos3d );
-            this.tool.drawMarkup( pos3d, markup.diameter, markup.serial );
-          }
+          const markups = data.map( function( d ) {
+            return {
+              id: d.serial,
+              diameter: d.diameter,
+              pos3d: d.pos3d
+            };
+          });
+
+          this.restoreState({
+            adnMarkup3d: {
+              markups
+            }});
         })
         .catch( ( error ) => console.error( new Error( error ) ) );
     }

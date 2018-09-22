@@ -104,6 +104,18 @@
       "flags": 0,
       "value": "Roof",
       "dbId": 2214
+    },
+    {
+      "name": "新性质",
+      "category": "Other",
+      "dataType_id": 7,
+      "dataTypeContext": "",
+      "description": "",
+      "displayName": "新性质",
+      "flags": 0,
+      "value": "修改性质",
+      "dbId": 2591,
+      "id": 5
     }
   ],
   "markups": [
@@ -146,6 +158,76 @@
       ],
       "diameter": 16,
       "id": 4
+    },
+    {
+      "serial": "b86c4cedb1",
+      "pos3d": [
+        29.033069734418746,
+        -66.73343507299256,
+        -17.787417697833803
+      ],
+      "diameter": 16,
+      "id": 5
+    },
+    {
+      "serial": "6fa06fd991",
+      "pos3d": [
+        -0.7852616380681354,
+        41.80084940233684,
+        13.477344791617895
+      ],
+      "diameter": 16,
+      "id": 6
+    }
+  ],
+  "levels": [
+    {
+      "id": 1,
+      "name": "Upper Unlimited",
+      "elevation": 20000,
+      "units": "mm"
+    },
+    {
+      "id": 2,
+      "name": "Roof Line",
+      "elevation": 6000,
+      "units": "mm"
+    },
+    {
+      "id": 3,
+      "name": "Level 2",
+      "elevation": 3000,
+      "units": "mm"
+    },
+    {
+      "id": 4,
+      "name": "Celling",
+      "elevation": 2700,
+      "units": "mm"
+    },
+    {
+      "id": 5,
+      "name": "Level 1",
+      "elevation": 0,
+      "units": "mm"
+    },
+    {
+      "id": 6,
+      "name": "Level 1 Living Rm.",
+      "elevation": -550,
+      "units": "mm"
+    },
+    {
+      "id": 7,
+      "name": "Foundation",
+      "elevation": -800,
+      "units": "mm"
+    },
+    {
+      "id": 8,
+      "name": "Lower Unlimited",
+      "elevation": -20000,
+      "units": "mm"
     }
   ]
 }

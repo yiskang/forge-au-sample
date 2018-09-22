@@ -11,13 +11,14 @@ This sample is for a ADN section "Advanced Forge Viewer integration" in AU China
 
 ## Sample Screencasts
 
-1. Custom Props Panel<br/>
+1. Custom Props Panel ([Source](https://github.com/yiskang/forge-au-sample/tree/master/properties))<br/>
 [![View on Youtube](http://img.youtube.com/vi/G07zHPx6Mr0/0.jpg)](http://www.youtube.com/watch?v=G07zHPx6Mr0)
-2. Custom Material Structure Panel<br/>
+2. Custom Material Structure Panel 
+([Source](https://github.com/yiskang/forge-au-sample/tree/master/model-structure))<br/>
 [![View on Youtube](http://img.youtube.com/vi/-Jy7yUbjP4E/0.jpg)](http://www.youtube.com/watch?v=-Jy7yUbjP4E)
-3. Markup 3d<br/>
+3. Markup 3d ([Source](https://github.com/yiskang/forge-au-sample/tree/master/markup3d))<br/>
 [![View on Youtube](http://img.youtube.com/vi/rwxEe1-CUJ4/0.jpg)](http://www.youtube.com/watch?v=rwxEe1-CUJ4)
-4. Sectioning with Revit levels<br/>
+4. Sectioning with Revit levels ([Source](https://github.com/yiskang/forge-au-sample/tree/master/level-section))<br/>
 [![View on Youtube](http://img.youtube.com/vi/Fy_dbD81bN8/0.jpg)](http://www.youtube.com/watch?v=Fy_dbD81bN8)
 
 ## Requirements

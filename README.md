@@ -11,10 +11,14 @@ This sample is for a ADN section "Advanced Forge Viewer integration" in AU China
 
 ## Sample Screencasts
 
-1. [![Custom Props Panel](http://img.youtube.com/vi/G07zHPx6Mr0/0.jpg)](http://www.youtube.com/watch?v=G07zHPx6Mr0)
-2. [![Custom Material Structure Panel](http://img.youtube.com/vi/-Jy7yUbjP4E/0.jpg)](http://www.youtube.com/watch?v=-Jy7yUbjP4E)
-3. [![Markup 3d](http://img.youtube.com/vi/rwxEe1-CUJ4/0.jpg)](http://www.youtube.com/watch?v=rwxEe1-CUJ4)
-4. [![Sectioning with Revit levels](http://img.youtube.com/vi/Fy_dbD81bN8/0.jpg)](http://www.youtube.com/watch?v=Fy_dbD81bN8)
+1. Custom Props Panel<br/>
+[![View on Youtube](http://img.youtube.com/vi/G07zHPx6Mr0/0.jpg)](http://www.youtube.com/watch?v=G07zHPx6Mr0)
+2. Custom Material Structure Panel<br/>
+[![View on Youtube](http://img.youtube.com/vi/-Jy7yUbjP4E/0.jpg)](http://www.youtube.com/watch?v=-Jy7yUbjP4E)
+3. Markup 3d<br/>
+[![View on Youtube](http://img.youtube.com/vi/rwxEe1-CUJ4/0.jpg)](http://www.youtube.com/watch?v=rwxEe1-CUJ4)
+4. Sectioning with Revit levels<br/>
+[![View on Youtube](http://img.youtube.com/vi/Fy_dbD81bN8/0.jpg)](http://www.youtube.com/watch?v=Fy_dbD81bN8)
 
 ## Requirements
 

@@ -18,10 +18,10 @@
 // by Eason Kang - Autodesk Developer Network (ADN)
 //
 
-import jsonServer from 'json-server';
-import path from 'path';
-import { DIRNAME } from './expose';
-import routes from './routes.json';
+const jsonServer = require('json-server');
+const path = require('path');
+const { DIRNAME } = require('./expose');
+const routes = require('./routes.json');
 
 const servePort = 3000;
 const dbFile = path.join( DIRNAME, 'db.json' );

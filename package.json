@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "node --experimental-modules mock-server/index.mjs"
+    "server": "node mock-server/index.js"
   },
   "keywords": [],
   "author": "yiskang <eason.kang@autodesk.com>",

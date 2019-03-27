@@ -7,7 +7,9 @@
     "@fortawesome/fontawesome-free": "^5.3.1",
     "json-server": "^0.14.0",
     "jstree": "^3.3.5",
-    "svg.js": "^2.6.6"
+    "svg.js": "^2.6.6",
+    "lodash": ">=4.17.11",
+    "morgan": ">=1.9.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.6",
